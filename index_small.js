@@ -23,8 +23,7 @@ const dbUser = config.get('dbUser')
 const dbPassword = config.get('dbPassword')
 const relations = config.get('relations')
 const defaultDate = new Date(config.get('defaultDate'))
-//const mbtilesDir = config.get('mbtilesDir') 
-const mbtilesDir = config.get('mbtilesDir_every') //edited 2020-01-22
+const mbtilesDir = config.get('mbtilesDir_small') 
 const logDir = config.get('logDir')
 const propertyBlacklist = config.get('propertyBlacklist')
 const conversionTilelist = config.get('everydayTilelist') //edited 2021-01-22
@@ -39,7 +38,7 @@ winston.configure({
   format: winston.format.simple(),
   transports: [ 
     new DailyRotateFile({
-      filename: `${logDir}/produce-everyday-%DATE%.log`,
+      filename: `${logDir}/produce-small-%DATE%.log`,
       datePattern: 'YYYY-MM-DD',
       maxSize: '20m',
       maxFiles: '14d'
@@ -167,12 +166,9 @@ SELECT column_name FROM information_schema.columns
       await client.query(`BEGIN`)
       sql = `
 DECLARE cur CURSOR FOR 
-WITH 
-  envelope AS (SELECT ST_MakeEnvelope(${bbox.join(', ')}, 4326) AS geom)
 SELECT 
   ${cols.toString()}
 FROM ${schema}.${table}
-JOIN envelope ON ${schema}.${table}.geom && envelope.geom
 ` 
       cols = await client.query(sql)
       try {
@@ -213,8 +209,8 @@ const queue = new Queue(async (t, cb) => {
     '--force',
     '--simplification=2',
     `--minimum-zoom=${Z}`,
-    '--maximum-zoom=15',
-    '--base-zoom=15',
+    '--maximum-zoom=5',
+    '--base-zoom=5',
     '--hilbert',
     `--clip-bounding-box=${bbox.join(',')}`,
     `--output=${tmpPath}`
@@ -258,14 +254,11 @@ const queueTasks = () => {
   let moduleKeys = Object.keys(modules)
   moduleKeys.sort((a, b) => modules[b].score - modules[a].score)
 
-  for (let moduleKey of moduleKeys) {
-//for (let moduleKey of conversionTilelist) {
-//  for (let moduleKey of ['6-34-30','6-34-31','6-34-32','6-35-30','6-35-31','6-35-32','6-36-30','6-36-31','6-36-32','6-37-30','6-37-31','6-37-32','6-38-30','6-38-31','6-38-32']) { //// TEMP
-    //if (modules[moduleKey].score > 0) {
+//  for (let moduleKey of moduleKeys) {
+  for (let moduleKey of ['0-0-0']) { //// Converting whole area as one
       queue.push({
         moduleKey: moduleKey
       })
-    //}
   }
 }
 

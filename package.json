@@ -1,14 +1,14 @@
 {
-  "name": "produce-gsc-osm-46",
+  "name": "small-test",
   "version": "1.0.0",
-  "description": "produce-gsc-osm-46",
+  "description": "small-test",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/un-vector-tile-toolkit/produce-gsc-osm-46.git"
+    "url": "git+https://github.com/ubukawa/small-test.git"
   },
   "keywords": [],
   "author": "",
