@@ -112,10 +112,37 @@ const minzoomWater = (f) => {
 }
 
 const lut = {
-  // 1. nature
+  landuse_naturalmedium0609_a: f => {
+    let lc_arr = [20, 30, 80]
+    if (!lc_arr.includes(f.properties.gridcode)) return null
+    f.tippecanoe = {
+      layer: 'nature-s',
+      minzoom: 5,
+      maxzoom: 5
+    }
+    return f
+  },
+  roads_major_0408_l: f => {
+    let rd_arr = [1, 3, 5, 7]
+    if (!rd_arr.includes(f.properties.z_order)) return null
+    f.tippecanoe = {
+      layer: 'road-s',
+      minzoom: 3,
+      maxzoom: 5
+    }
+    return f
+  },
+  unhq_bndl: f => {
+    f.tippecanoe = {
+      layer: 'bndl',
+      minzoom: 5,
+      maxzoom: 5
+    }
+    return f
+  },
   unhq_bndl05: f => {
     f.tippecanoe = {
-      layer: 'hq_bnd',
+      layer: 'bndl',
       minzoom: 3,
       maxzoom: 4
     }
@@ -123,441 +150,94 @@ const lut = {
   },
    unhq_bndl25: f => {
     f.tippecanoe = {
-      layer: 'hq_bnd',
+      layer: 'bndl',
       minzoom: 0,
       maxzoom: 2
     }
     return f
   },
-
-
-
-  // 1. nature
-  un_mission_lc_ls: f => {
+  custom_planet_land_a_l08: f => {
+    if (f.properties.geom === null) return null
     f.tippecanoe = {
-      layer: 'landcover',
-      minzoom: 10,
-      maxzoom: 15
+      layer: 'landmass',
+      minzoom: 0,
+      maxzoom: 5
     }
     return f
   },
-  un_glc30_global_lc_ms: f => {
+  un_glc30_global_lc_ss: f => {
     f.tippecanoe = {
       layer: 'landcover',
-      minzoom: 5,
-      maxzoom: 9
+      minzoom: 3,
+      maxzoom: 5
     }
     delete f.properties['id']
-    return f
-  },
-  // 2. water
-  custom_planet_ocean_l08: f => {
-    f.tippecanoe = {
-      layer: 'ocean',
-      minzoom: 5,
-      maxzoom: 7
-    }
-    return f
-  },
-  custom_planet_ocean: f => {
-    f.tippecanoe = {
-      layer: 'ocean',
-      minzoom: 8,
-      maxzoom: 15
-    } 
-    return f
-  },
-  custom_planet_land_a_l08: f => {
-    f.tippecanoe = {
-      layer: 'landmass',
-      minzoom: 5,
-      maxzoom: 7
-    }
-    return f
-  },
-  custom_planet_land_a: f => {
-    f.tippecanoe = {
-      layer: 'landmass',
-      minzoom: 8,
-      maxzoom: 15
-    } 
     return f
   },
   custom_ne_rivers_lakecentrelines: f => {
     f.tippecanoe = {
       layer: 'un_water',
-      minzoom: 5,
-      maxzoom: 7
+      minzoom: 0,
+      maxzoom: 4
     }
     return f
   },
-  // 3. boundary
-  unhq_bndl: f => {
+  unhq_bnda_cty_anno_l03: f => {
     f.tippecanoe = {
-      layer: 'hq_bnd',
-      minzoom: 5,
-      maxzoom: 15
+      layer: 'lab_cty',
+      minzoom: 1,
+      maxzoom: 1
     }
     return f
   },
- unhq_bnda_a1: f => {
+  unhq_bnda_cty_anno_l04: f => {
     f.tippecanoe = {
-      layer: 'hq_bnd',
-      minzoom: 6,
-      maxzoom: 8
+      layer: 'lab_cty',
+      minzoom: 2,
+      maxzoom: 2
     }
     return f
   },
-  unhq_bnda_a2: f => {
+  unhq_bnda_cty_anno_l05: f => {
     f.tippecanoe = {
-      layer: 'hq_bnd',
-      minzoom: 9,
-      maxzoom: 15
-    }
-    return f
-  },
- unhq_bnda_a1_p: f => {
-    f.tippecanoe = {
-      layer: 'hq_bnd_lab1',
-      minzoom: 6,
-      maxzoom: 8
-    }
-    return f
-  },
-  unhq_bnda_a2_p: f => {
-    f.tippecanoe = {
-      layer: 'hq_bnd_lab2',
-      minzoom: 9,
-      maxzoom: 15
-    }
-    return f
-  },
-  custom_unmap_0_bnda_a1: f => {
-    f.tippecanoe = {
-      layer: 'c_bnd',
-      minzoom: 6,
-      maxzoom: 8
-    }
-    return f
-  },
-  custom_unmap_0_bnda_a2: f => {
-    f.tippecanoe = {
-      layer: 'c_bnd',
-      minzoom: 9,
-      maxzoom: 15
-    }
-    return f
-  },
-  custom_unmap_0_bnda_a1_p: f => {
-    f.tippecanoe = {
-      layer: 'c_bnd_lab1',
-      minzoom: 6,
-      maxzoom: 8
-    }
-    return f
-  },
-  custom_unmap_0_bnda_a2_p: f => {
-    f.tippecanoe = {
-      layer: 'c_bnd_lab2',
-      minzoom: 9,
-      maxzoom: 15
-    }
-    return f
-  },
-  custom_unmap_0_bndl: f => {
-    f.tippecanoe = {
-      layer: 'c_bnd',
-      minzoom: 5,
-      maxzoom: 15
-    }
-    return f
-  },
-  un_unmik_bnda_a2: f => {
-    f.tippecanoe = {
-      layer: 'mik_bnd',
-      minzoom: 7,
-      maxzoom: 8
-    }
-    return f
-  },
-  un_unmik_bnda_a_p: f => {
-    f.tippecanoe = {
-      layer: 'mik_bnd_lab2',
-      minzoom: 7,
-      maxzoom: 8
-    }
-    return f
-  },
-  un_unmik_bnda_a3: f => {
-    f.tippecanoe = {
-      layer: 'mik_bnd',
-      minzoom: 9,
-      maxzoom: 15
-    }
-    return f
-  },
-  un_unmik_bnda_a3_p: f => {
-    f.tippecanoe = {
-      layer: 'mik_bnd_lab3',
-      minzoom: 8,
-      maxzoom: 15
-    }
-    return f
-  },
-  un_unmik_bndl: f => {
-    f.tippecanoe = {
-      layer: 'mik_bnd',
-      minzoom: 7,
-      maxzoom: 15
-    }
-    return f
-  },
-  un_unvmc_igac_bnda_a1_departments: f => {
-    f.tippecanoe = {
-      layer: 'vmc_bnd',
-      minzoom: 7,
-      maxzoom: 8
-    }
-    return f
-  },
-  un_unvmc_igac_bnda_a1_departments_p: f => {
-    f.tippecanoe = {
-      layer: 'vmc_bnd_lab1',
-      minzoom: 7,
-      maxzoom: 8
-    }
-    return f
-  },
-  un_unvmc_igac_bnda_a2_municipalities: f => {
-    f.tippecanoe = {
-      layer: 'vmc_bnd',
-      minzoom: 9,
-      maxzoom: 10
-    }
-    return f
-  },
-  un_unvmc_igac_bnda_a2_municipalities_p: f => {
-    f.tippecanoe = {
-      layer: 'vmc_bnd_lab2',
-      minzoom: 9,
-      maxzoom: 10
-    }
-    return f
-  },
-  un_unvmc_igac_bnda_a3_rural_units: f => {
-    f.tippecanoe = {
-      layer: 'vmc_bnd',
-      minzoom: 11,
-      maxzoom: 15
-    }
-    return f
-  },
-  un_unvmc_igac_bnda_a3_rural_units_p: f => {
-    f.tippecanoe = {
-      layer: 'vmc_bnd_lab3',
-      minzoom: 11,
-      maxzoom: 15
-    }
-    return f
-  },
-  un_unvmc_igac_bndl: f => {
-    f.tippecanoe = {
-      layer: 'vmc_bnd',
-      minzoom: 6,
-      maxzoom: 15
-    }
-    return f
-  },
-  unhq_bnda05_cty: f => {
-    f.tippecanoe = {
-      layer: 'bnd_cty',
-      minzoom: 5,
-      maxzoom: 11
+      layer: 'lab_cty',
+      minzoom: 3,
+      maxzoom: 3
     }
     return f
   },
   unhq_bnda_cty_anno_l06: f => {
     f.tippecanoe = {
       layer: 'lab_cty',
-      minzoom: 5,
-      maxzoom: 11
+      minzoom: 4,
+      maxzoom: 4
     }
     return f
   },
-
-  // 9. place
-  unhq_popp: f => {
+  unhq_cm02_phyp_anno_l04: f => {
     f.tippecanoe = {
-      layer: 'un_popp',
-      minzoom: 5,
-      maxzoom: 15
+      layer: 'lab_water_m',
+      minzoom: 1,
+      maxzoom: 3
     }
-    return f
-  },
-  un_global_places: f => {
-    f.tippecanoe = {
-      layer: 'un_place',
-      minzoom: 6,
-      maxzoom: 15
-    }
-    f.properties._source = 'un_global_places'
     return f
   },
   unhq_cm02_phyp_anno_l06: f => {
     f.tippecanoe = {
       layer: 'lab_water_m',
-      minzoom: 5,
-      maxzoom: 10
+      minzoom: 4,
+      maxzoom: 5
     }
     return f
   },
-  unhq_phyp: f => {
+  unhq_popp: f => {
+    let popp_arr = [1, 2, 3]
+    if (!popp_arr.includes(f.properties.poptyp_code)) return null
+    if (f.properties.poptyp_code !== 3 || f.properties.scl_id_code !== 10) return null
     f.tippecanoe = {
-      layer: 'label',
-      minzoom: 5,
-      maxzoom: 15
-    }
-//edit 2021-01-27 starts
-f.properties.display = 0
-if (f.properties.type_code == 4 && !/Sea|Ocean|Gulf/.test(f.properties.name) ){
-f.properties.display = 1
-}
-//edit 2021-01-27 ends
-
-    return f
-  },
-  un_minusca_pois: f => {
-    f.tippecanoe = {
-      layer: 'poi_minusca',
-      maxzoom: 15
-    }
-    switch (f.properties.feat_class) {
-      //Large airport
-      case 'Airport':
-         f.tippecanoe.minzoom = 7
-        break
-      //public
-      case 'NGO':
-      case 'Police':
-      case 'Embassy':
-      case 'Consulate':
-      case 'Local Authority':
-      case 'International Organisation':
-      case 'Public Place':
-      case 'National Institution':
-      case 'Regional Organisation':
-      case 'Library':
-      case 'Youth Centre':
-      case 'Social Centre':
-      case 'Military Camp':
-         f.tippecanoe.minzoom = 11
-        break
-      //transport1
-      case 'Boat Ramp':
-         f.tippecanoe.minzoom = 12
-        break
-      //service1
-      case 'Hospital':
-      case 'Health Centre':
-      case 'University & College':
-      case 'Kindergarten':
-      case 'Primary School':
-      case 'Secondary School':
-      case 'Hotel':
-         f.tippecanoe.minzoom = 13
-        break
-      //worship
-      case 'Church':
-      case 'Mosque':
-         f.tippecanoe.minzoom = 13
-        break
-      //traffic
-      case 'Fuel Station':
-         f.tippecanoe.minzoom = 14
-        break
-/*
-      //service2
-      case 'Club':
-      case 'Restaurant':
-         f.tippecanoe.minzoom = 15
-        break
-      //heritage
-      case 'Cemetery':
-      case 'Landmark':
-         f.tippecanoe.minzoom = 15
-        break
-      //other
-      case 'Market':
-      case 'Super Market':	
-      case 'Bank':
-      case 'RadioTower':
-      case 'Telecommunication':
-      case 'Stadium':
-      case 'Zoo':
-         f.tippecanoe.minzoom = 15
-        break
-*/
-     default:
-        f.tippecanoe.minzoom = 15
-    }
-    return f
-  },
-  un_global_pois: f => {
-    f.tippecanoe = {
-      layer: 'un_poi',
-      maxzoom: 15
-    }
-    switch (f.properties.type) {
-      //Large airport
-      case 'Airport':
-         f.tippecanoe.minzoom = 7
-        break
-      //transport1(big)
-      case 'Airfield':
-      case 'Helipad':
-         f.tippecanoe.minzoom = 10
-        break
-      //public
-      case 'NGO':
-      case 'UN':
-      case 'Post Office':
-      case 'Fire Station':
-      case 'Prison':
-      case 'Police Station':
-      case 'Courthouse':
-      case 'Embassy':
-      case 'Town Hall':
-      case 'Other Public Building':
-      case 'Military':
-         f.tippecanoe.minzoom = 11
-        break
-      //transport1(small)
-      case 'Taxi Station':
-      case 'Ferry Terminal':
-      case 'Port':
-      case 'Bus Station':
-      case 'Railway Station':
-         f.tippecanoe.minzoom = 12
-        break
-      //service1
-      case 'Hospital':
-      case 'University':
-      case 'College':
-      case 'School':
-      case 'Hotel':
-         f.tippecanoe.minzoom = 13
-        break
-      //worship
-      case 'Christian':
-      case 'Muslim':
-         f.tippecanoe.minzoom = 13
-        break
-      //traffic
-      case 'Fuel':
-         f.tippecanoe.minzoom = 14
-        break
-     default:
-        f.tippecanoe.minzoom = 15
+      layer: 'un_popp',
+      minzoom: 3,
+      maxzoom: 5
     }
     return f
   }

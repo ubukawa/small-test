@@ -26,7 +26,7 @@ const defaultDate = new Date(config.get('defaultDate'))
 const mbtilesDir = config.get('mbtilesDir_small') 
 const logDir = config.get('logDir')
 const propertyBlacklist = config.get('propertyBlacklist')
-const conversionTilelist = config.get('everydayTilelist') //edited 2021-01-22
+//const conversionTilelist = config.get('everydayTilelist') //edited 2021-01-22
 const spinnerString = config.get('spinnerString')
 const fetchSize = config.get('fetchSize')
 const tippecanoePath = config.get('tippecanoePath')
@@ -57,34 +57,6 @@ let moduleKeysInProgress = []
 
 const isIdle = () => {
   return idle
-}
-
-// all scores are zero because we cannot login as unix user
-const getScores = async () => {
-  return new Promise(async (resolve, reject) => {
-    // identify modules to update
-    let oldestDate = new Date()
-
-//Replaced loop (based on the list)
-    for (const moduleKey of conversionTilelist) {
-      const path = `${mbtilesDir}/${moduleKey}.mbtiles`
-      let mtime = defaultDate
-      let size = 0
-      if (fs.existsSync(path)) {
-        let stat = fs.statSync(path)
-        mtime = stat.mtime
-        size = stat.size
-      }
-      oldestDate = (oldestDate < mtime) ? oldestDate : mtime
-      modules[moduleKey] = {
-        mtime: mtime,
-        size: size,
-       score: 0
-      }
-    }
-
-    resolve()
-  })
 }
 
 const iso = () => {
@@ -141,14 +113,13 @@ const fetch = (client, database, table, downstream) => {
 const dumpAndModify = async (bbox, relation, downstream, moduleKey) => {
   return new Promise((resolve, reject) => {
     const startTime = new Date()
-//    const [database, table] = relation.split('::')
     const [database, schema, table] = relation.split('::')
     if (!pools[database]) {
       pools[database] = new Pool({
-        host: host,
-        user: dbUser,
-        port: port,
-        password: dbPassword,
+        host: host[database],
+        user: dbUser[database],
+        port: port[database],
+        password: dbPassword[database],
         database: database
       })
     }
@@ -162,13 +133,16 @@ SELECT column_name FROM information_schema.columns
       cols = cols.rows.map(r => r.column_name).filter(r => r !== 'geom')
       cols = cols.filter(v => !propertyBlacklist.includes(v))
       // ST_AsGeoJSON(ST_Intersection(ST_MakeValid(${table}.geom), envelope.geom))
-      cols.push(`ST_AsGeoJSON(${schema}.${table}.geom)`)
+      cols.push(`ST_AsGeoJSON(${table}.geom)`)
       await client.query(`BEGIN`)
       sql = `
 DECLARE cur CURSOR FOR 
+WITH 
+  envelope AS (SELECT ST_MakeEnvelope(${bbox.join(', ')}, 4326) AS geom)
 SELECT 
   ${cols.toString()}
 FROM ${schema}.${table}
+JOIN envelope ON ${schema}.${table}.geom && envelope.geom
 ` 
       cols = await client.query(sql)
       try {
@@ -220,7 +194,7 @@ const queue = new Queue(async (t, cb) => {
     moduleKeysInProgress = moduleKeysInProgress.filter((v) => !(v === moduleKey))
     productionSpinner.stop()
     process.stdout.write('\n')
-    const logString = `${iso()}: [${queueStats.total + 1}/${queueStats.peak}] process ${moduleKey} (score: ${modules[moduleKey].score}, ${pretty(modules[moduleKey].size)} => ${pretty(fs.statSync(dstPath).size)}) took ${TimeFormat.fromMs(new Date() - startTime)} wtps=${wtps}.`
+    const logString = `${iso()}: [${queueStats.total + 1}/${queueStats.peak}] process ${moduleKey} ( ${pretty(modules[moduleKey].size)} => ${pretty(fs.statSync(dstPath).size)}) took ${TimeFormat.fromMs(new Date() - startTime)} wtps=${wtps}.`
     winston.info(logString)
     console.log(logString)
     if (moduleKeysInProgress.length !== 0) {
@@ -252,7 +226,6 @@ const queue = new Queue(async (t, cb) => {
 
 const queueTasks = () => {
   let moduleKeys = Object.keys(modules)
-  moduleKeys.sort((a, b) => modules[b].score - modules[a].score)
 
 //  for (let moduleKey of moduleKeys) {
   for (let moduleKey of ['0-0-0']) { //// Converting whole area as one
@@ -271,7 +244,6 @@ const shutdown = () => {
 
 const main = async () => {
   winston.info(`${iso()}: Everyday tile production started.`)
-  await getScores()
   queueTasks()
   queue.on('drain', () => {
     shutdown()

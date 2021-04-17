@@ -1,5 +1,4 @@
 {
-  host: localhost
   wtpsThreshold: 50
   monitorPeriod: 10
   Z: 0
@@ -7,19 +6,31 @@
   concurrentE: 2
   maxRetries: 5
   retryDelay: 5000
-  port: 5432
-  dbUser: postgress
-  dbPassword: ABCDEFG
-  skipSea: yes
+  host: {
+   sde_pg_3: localhost
+   un_base: localhost
+  }
+  port: {
+   sde_pg_3: 5433
+   un_base: 5433
+  }
+  dbUser: {
+   sde_pg_3: user1
+   un_base: user2
+  }
+  dbPassword: {
+   sde_pg_3: password1
+   un_base: password2
+  }
   relations: [
+   sde_pg_3::vectortile::landuse_naturalmedium0609_a
+   sde_pg_3::vectortile::roads_major_0408_l         
+   un_base::public::unhq_bndl
    un_base::public::unhq_bndl05
    un_base::public::unhq_bndl25
    un_base::public::custom_planet_land_a_l08
    un_base::public::custom_ne_rivers_lakecentrelines
-   un_base::public::custom_planet_ocean_l08
-   un_base::public::custom_unmap_0_bndl
-   un_base::public::unhq_bnda25_cty
-   un_base::public::unhq_bnda05_cty
+   un_base::public::unhq_phyp
    un_base::public::unhq_bnda_cty_anno_l03
    un_base::public::unhq_bnda_cty_anno_l04
    un_base::public::unhq_bnda_cty_anno_l05
@@ -27,9 +38,7 @@
    un_base::public::unhq_cm02_phyp_anno_l04
    un_base::public::unhq_cm02_phyp_anno_l06
    un_base::public::un_glc30_global_lc_ss
-   un_base::public::un_glc30_global_lc_ms
    un_base::public::unhq_popp
-   un_base::public::unhq_phyp
   ]
   defaultDate: 2021-01-20
   logDir: log
